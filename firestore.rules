@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function estConnecte() {
+      return request.auth != null;
+    }
+
+    function estAdmin() {
+      return estConnecte() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // Chaque utilisateur peut lire son propre profil ; seul un admin peut gérer les comptes
+    match /users/{userId} {
+      allow read: if estConnecte();
+      allow write: if estAdmin();
+    }
+
+    // Finance : admin et membre peuvent lire/ajouter/modifier, seul l'admin supprime
+    match /transactions/{transactionId} {
+      allow read, create, update: if estConnecte();
+      allow delete: if estAdmin();
+    }
+
+    // Stock : même logique que les transactions
+    match /products/{productId} {
+      allow read, create, update: if estConnecte();
+      allow delete: if estAdmin();
+    }
+
+    // Ventes : lecture/écriture par tout membre connecté, pas de suppression prévue
+    match /sales/{saleId} {
+      allow read, create: if estConnecte();
+      allow update, delete: if estAdmin();
+    }
+
+    // Réunions : tout membre connecté peut planifier et éditer le compte-rendu
+    match /meetings/{meetingId} {
+      allow read, create, update: if estConnecte();
+      allow delete: if estAdmin();
+    }
+
+    // Journal d'activité : lecture pour tous, écriture uniquement via le serveur/app (pas de suppression)
+    match /logs/{logId} {
+      allow read: if estConnecte();
+      allow create: if estConnecte();
+      allow update, delete: if false;
+    }
+  }
+}
