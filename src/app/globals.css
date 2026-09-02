@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0C0C0E;
+  --surface: #17171A;
+  --border-c: #2A2A2E;
+  --ink: #F2F1EC;
+  --muted: #8B8B92;
+  --dim: #5A5A60;
+  --gold: #C9A227;
+  --positive: #6FA287;
+  --negative: #B5533C;
+}
+
+html.light {
+  --bg: #F5F3EE;
+  --surface: #FFFFFF;
+  --border-c: #E2DFD5;
+  --ink: #17171A;
+  --muted: #6E6E72;
+  --dim: #A3A3A7;
+  --gold: #B8891E;
+  --positive: #4F8567;
+  --negative: #9A4530;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
